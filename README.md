@@ -1,2 +1,2 @@
-# sms
-This package contains various SMS libraries one can use in their project
+# Mifos
+This package contains various php libraries for interfacing with Mifos systems

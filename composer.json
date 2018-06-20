@@ -1,6 +1,6 @@
 {
 	"name": "tyondo/mifos",
-	"description": "This package contains connection to various SMS providers",
+	"description": "This package contains connection php library for ease connection to a mifos instance",
 	"keywords": ["mifos", "tyondo","php","laravel"],
 	"type": "library",
 	"license": "MIT",
