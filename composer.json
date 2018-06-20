@@ -1,5 +1,5 @@
 {
-	"name": "tyondo/mifos",
+	"name": "rndwiga/mifos",
 	"description": "This package contains connection php library for ease connection to a mifos instance",
 	"keywords": ["mifos", "tyondo","php","laravel"],
 	"type": "library",
