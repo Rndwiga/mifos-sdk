@@ -62,7 +62,32 @@ class ClientHelper extends MifosXConnection
             }
         }
 
+        return $response;
+    }
 
+    public function getClientAccountsOverview($getArray = false, $clientId=null, $loanAccount =false, $savingsAccount=false){
+        if(isset($clientId)){
+            $urlSegment = "/clients/". $clientId . "/accounts";
+        }else{
+            return false;
+        }
+
+        if ($loanAccount == true && $savingsAccount== false){
+            $urlSegment = $urlSegment."?fields=loanAccounts";
+        }elseif($loanAccount == false && $savingsAccount== true){
+            $urlSegment = $urlSegment."?fields=savingsAccounts";
+        }elseif ($loanAccount == true && $savingsAccount== true){
+            $urlSegment = $urlSegment."?fields=loanAccounts,savingsAccounts";
+        }
+
+
+        $requestedData = $this->curlGetRequest($urlSegment);
+
+        if ($getArray == true){
+            $response =	json_decode($requestedData,true);
+        }else{
+            $response =	json_decode($requestedData);
+        }
 
         return $response;
     }

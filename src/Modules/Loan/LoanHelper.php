@@ -11,29 +11,48 @@ namespace Rndwiga\Mifos\Modules\Loan;
 use Rndwiga\Mifos\DataUpload;
 use Rndwiga\Mifos\Helpers\MifosUtility;
 use Rndwiga\Mifos\MifosXConnection;
+use Rndwiga\Mifos\Module\Client\ClientHelper;
 
 
 class LoanHelper extends MifosXConnection
 {
-    public function createLoan($clientId, $loanAmount){
-
+    public function createLoan($clientId, $loanAmount = null,array $postData= []){
+        if (count($postData) == 0){
+            $postData= [
+                "clientId"=> $clientId,
+                "loanType"=> "individual",
+                "productId"=> $postData['loanProductId'],
+                "principal"=> (string)$loanAmount,
+                "loanTermFrequency"=> 1,
+                "loanTermFrequencyType"=> 2,
+                "numberOfRepayments"=> 1,
+                "repaymentEvery"=> 1,
+                "repaymentFrequencyType"=> 2,
+                "interestRatePerPeriod"=> 0,
+                "amortizationType"=> 1,
+                "interestType"=> 0,
+                "interestCalculationPeriodType"=> 1,
+                "expectedDisbursementDate"=> date("d M Y"),
+                "transactionProcessingStrategyId"=> 1
+            ];
+        }
         $data = [
             "dateFormat"=> "dd MMMM yyyy",
             "locale"=> "en_GB",
-            "clientId"=> $clientId,
-            "productId"=> 1,
-            "principal"=> (string)$loanAmount,
-            "loanTermFrequency"=> 1,
-            "loanTermFrequencyType"=> 2,
+            "clientId"=> $postData['clientId'],
+            "productId"=> $postData['productId'],
+            "principal"=> $postData['principal'],
+            "loanTermFrequency"=> $postData['loanTermFrequency'],
+            "loanTermFrequencyType"=> $postData['loanTermFrequencyType'],
             "loanType"=> "individual",
-            "numberOfRepayments"=>1,
-            "repaymentEvery"=> 1,
-            "repaymentFrequencyType"=> 2,
-            "interestRatePerPeriod"=> 0,
-            "amortizationType"=> 1,
-            "interestType"=> 0,
-            "interestCalculationPeriodType"=> 1,
-            "transactionProcessingStrategyId"=> 1,
+            "numberOfRepayments"=>$postData['numberOfRepayments'],
+            "repaymentEvery"=> $postData['repaymentEvery'],
+            "repaymentFrequencyType"=> $postData['repaymentFrequencyType'],
+            "interestRatePerPeriod"=> $postData['interestRatePerPeriod'],
+            "amortizationType"=> $postData['amortizationType'],
+            "interestType"=> $postData['interestType'],
+            "interestCalculationPeriodType"=> $postData['interestCalculationPeriodType'],
+            "transactionProcessingStrategyId"=> $postData['transactionProcessingStrategyId'],
             "expectedDisbursementDate"=> date("d M Y"),
             "submittedOnDate"=> date("d M Y")
         ];
@@ -46,8 +65,7 @@ class LoanHelper extends MifosXConnection
         return $mifosLoan;
     }
 
-    public function getLoans($getArray = false,$loanId = null,$withTransactions = true,$withClientDetails = false){
-
+    public function getLoans($getArray = false,$loanId = null,$withTransactions = true,$withClientDetails = false,$withRepaymentSchedule=false){
 
         if(isset($loanId)){
             $urlSegment = "/loans/". $loanId;
@@ -57,6 +75,10 @@ class LoanHelper extends MifosXConnection
 
         if ($withTransactions == true){
             $urlSegment = $urlSegment."?associations=transactions";
+        }
+
+        if ($withRepaymentSchedule === true){
+            $urlSegment = $urlSegment."?associations=repaymentSchedule";
         }
 
         $requestedData = $this->curlGetRequest($urlSegment);
